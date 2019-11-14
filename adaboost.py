@@ -114,7 +114,7 @@ with open('data3_19.csv','rt')as f:
 attributes = list(data.keys())[:-1]
 
 accuracy = []
-n = 1000 #number of sampling data points
+n = len(data[list(data.keys())[0]]) #number of sampling data points
 probabilities = np.full(len(data[attributes[0]]), 1/len(data[attributes[0]]))
 tree_lis = []
 alpha_lis = []
@@ -130,15 +130,20 @@ for iter in range(3):
 	# pprint.pprint(tree, indent=4)
 	epsilon = 0
 	wrong = []
+
 	for i in draw:
+		# print(i)
 		pred = tree_lis[num]
 		while(pred!='yes' and pred!='no'):
+			# print(pred.keys(), data[list(pred.keys())[0]][i])
 			pred = pred[list(pred.keys())[0]][ data[list(pred.keys())[0]][i] ] 
 		# print(pred, data[list(data.keys())[-1]][i])
 		if(pred!=data[list(data.keys())[-1]][i]):
 			epsilon+=probabilities[i]
 			wrong.append(i)
 	# print(epsilon)
+	# pprint.pprint(tree_lis[iter], indent=4)
+	# print()
 	alpha = np.log((1-epsilon)/epsilon)/2
 	alpha_lis.append(alpha)
 	probabilities = probabilities*np.exp(alpha)
@@ -172,6 +177,7 @@ for i in range(len(data[list(data.keys())[0]])):
 	for j in range(3):
 		pred = tree_lis[j]
 		while(pred!='yes' and pred!='no'):
+			# print(pred.keys())
 			pred = pred[list(pred.keys())[0]][ data[list(pred.keys())[0]][i] ] 
 		if(pred=='yes'):
 			y+=alpha_lis[j]
